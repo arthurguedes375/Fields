@@ -161,7 +161,7 @@ if (areFieldsValid !== true) {
 
 2. Second one:
 ```typescript
-import { Factory, Repository } from 'fields-validator-repo';
+import { Fields, Repository } from 'fields-validator-repo';
 
 /*
     You can also create the instance by 
