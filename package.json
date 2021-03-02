@@ -1,0 +1,26 @@
+{
+  "name": "fields-validator",
+  "version": "1.0.0",
+  "description": "Valid if the fields are right before store it in your db",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arthurguedes375/Fields.git"
+  },
+  "keywords": [
+    "fields",
+    "validator",
+    "body",
+    "validator",
+    "validator"
+  ],
+  "author": "Arthur Guedes <arthurguedes375@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arthurguedes375/Fields/issues"
+  },
+  "homepage": "https://github.com/arthurguedes375/Fields#readme"
+}
