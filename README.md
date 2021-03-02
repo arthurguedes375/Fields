@@ -8,10 +8,18 @@ This is a project for who wants to validate the data of anything before storing 
 ```typescript
 import { Factory, Repository } from 'fields-validator-repo';
 
-// The repo is the fields that are necessary
-// You set the name of the field and then set it as null if it is necessary
+/*
+    The repo is the fields that
+    are necessary
+*/
+/*
+    You set the name of the field
+    and then set it as null
+    if the field is necessary
+*/
 
-/* In this example the right data structure is: 
+/* In this example the
+right data structure is: 
 
     {
         user: {
@@ -30,7 +38,8 @@ import { Factory, Repository } from 'fields-validator-repo';
         promocode: "50-promo-abc",
     }
 
-    The next repository makes that data structure: 
+    The next repository makes that data
+    structure: 
 
     {
         user: {
@@ -51,9 +60,24 @@ import { Factory, Repository } from 'fields-validator-repo';
 
 */
 
-// The BuyFields returns a Fields Object already setted the repo so you just need to run the validation(running the function .runFields())
-// You should create a file and put only the BuyFields with the imports and export it like: export const BuyFields = (data: object) => {...}
-// And in another file use it to return the Fields Object(the BuyFields use a factory to return the Fields Object)
+/*
+    The BuyFields returns a
+    Fields Object already setted the
+    repo so you just need to run the
+    validation(running thefunction
+    .runFields())
+*/
+/*
+    You should create a file and put only the
+    BuyFields with the imports and export it 
+    like: export const BuyFields = (data: 
+    object) => {...}
+*/
+/*
+    And in another file use it to return the 
+    Fields Object(the BuyFields use a factory 
+    to return the Fields Object)
+*/
 const BuyFields = (data: object) => {
     const repo: Repository = {
         user: {
@@ -92,17 +116,37 @@ const data = {
     promocode: "50-promo-abc",
 }
 
-// This is the Fields Object already setted the repository
-// Note that this one you do not need to pass the repository anytime that you want to check if the data is right because the factory already created a instance with the repository
-const Fields = BuyFields(data);
+/*
+    This is the Fields Object already
+    setted the repository
+*/
+/*
+    Note that this one you do not need to 
+    pass the repository anytime that you want 
+    to check if the data is right because the 
+    factory already created a instance with 
+    the repository
+*/
+    const Fields = BuyFields(data);
 
 // ---------
 
-// The next function(Fields.runFields()) returns true if the data is right or returns an array with the name of the fields that is missing
+/*
+    The next function(Fields.runFields()) 
+    returns true if the data is right or 
+    returns an array with the name of the 
+    fields that is missing
+*/
 
-// Example, if the user did not pass the promocode it is going to return ['promocode'] or if the user did not pass the promocode and the address it is going to return ['promocode', 'address']
-
-// But if the user did pass everything right so it is going to return true
+/*
+    Example, if the user did not pass the 
+    promocode it is going to return 
+    ['promocode'] or if the user did not pass 
+    the promocode and the address it is going 
+    to return ['promocode', 'address']
+    But if the user did pass everything right 
+    so it is going to return true
+*/
 
 const areFieldsValid = Fields.runFields();
 if (areFieldsValid !== true) {
@@ -119,7 +163,11 @@ if (areFieldsValid !== true) {
 ```typescript
 import { Factory, Repository } from 'fields-validator-repo';
 
-// You can also create the instance by yourself(without using any factory, I DO NOT RECOMMEND)
+/*
+    You can also create the instance by 
+    yourself(without using any factory, I DO 
+    NOT RECOMMEND)
+*/
 const repo: Repository = {
     user: {
         name: null,
@@ -157,9 +205,16 @@ const data = {
 
 
 
-
-// If you do this anywhere that you want to test if the data is right you need to import the repository and create the instance and then run: .runFields()
-// The return of this function is the same as the previous one(With the factory)
+/*
+    If you do this anywhere that you want to 
+    test if the data is right you need to 
+    import the repository and create the 
+    instance and then run: .runFields()
+*/
+/*
+    The return of this function is the same 
+    as the previous one(With the factory)
+*/
 const FieldsInstance = new Fields(repo, data);
 const areFieldsValid = FieldsInstance.runFields();
 if (areFieldsValid !== true) {
