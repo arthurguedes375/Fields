@@ -1,5 +1,5 @@
 {
-  "name": "fields-validator",
+  "name": "fields-validator-repo",
   "version": "1.0.0",
   "description": "Valid if the fields are right before store it in your db",
   "main": "index.ts",
@@ -11,11 +11,9 @@
     "url": "git+https://github.com/arthurguedes375/Fields.git"
   },
   "keywords": [
-    "fields",
-    "validator",
-    "body",
-    "validator",
-    "validator"
+    "fields-validator",
+    "body-validator",
+    "form-validator"
   ],
   "author": "Arthur Guedes <arthurguedes375@gmail.com>",
   "license": "MIT",
