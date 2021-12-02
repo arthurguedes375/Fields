@@ -45,7 +45,7 @@ const FieldsInstance = new Fields(repo, data);
 const areFieldsValid = FieldsInstance.runFields();
 if (areFieldsValid !== true) {
     console.log({
-        message: 'It is missing data',
+        message: 'Invalid data',
         missing: areFieldsValid,
     })
 }

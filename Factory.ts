@@ -7,8 +7,7 @@ interface IFactory {
     readonly data: object;
 }
 export class Factory implements IFactory {
-    readonly Fields: Fields;
-
+    Fields;
     constructor(
         readonly Repository: Repository,
         readonly data: object,

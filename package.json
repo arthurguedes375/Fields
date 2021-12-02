@@ -1,7 +1,7 @@
 {
   "name": "fields-validator-repo",
-  "version": "1.0.3",
-  "description": "Valid if the fields are right before store it in your db",
+  "version": "2.0.0",
+  "description": "Valid if the fields are right",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
