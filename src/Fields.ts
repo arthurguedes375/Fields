@@ -76,14 +76,17 @@ class Fields implements IFields {
             // "dataValue" is the data with the same key as the current repoKey
             const dataValue = data[repoKey];
 
-            if ((!dataValue && dataValue !== false) && (repoValue !== null && ((repoValue.filters?.length || 0) > 0 || repoValue.maxLength !== undefined || repoValue.required !== undefined) && (repoValue.required === true || repoValue.required === undefined))) {
+
+            //The data is invalid(null || undefined) and it is not false  // Making sure that the repoValue is a field and not another repo                                                      // The required is true
+            if ((!dataValue && dataValue !== false) && (repoValue === null || (repoValue !== null && ((repoValue.filters?.length || 0) > 0 || repoValue.maxLength !== undefined || repoValue.required !== undefined) && (repoValue.required === true || repoValue.required === undefined)))) {
+                // It gets here if the data is a nullish value and the field is set to null or if the field.required is set to true 
                 missingFields = arrayWithTheMissingField(
                     missingFields,
                     repoKey,
                     "This field is required and it must not be null or undefined"
                 );
                 continue;
-            } else if (repoValue && repoValue.maxLength && Number.isInteger(repoValue.maxLength) && dataValue.length > repoValue.maxLength) {
+            } else if (repoValue && repoValue.maxLength && Number.isInteger(repoValue.maxLength) && dataValue && dataValue.length > repoValue.maxLength) {
                 missingFields = arrayWithTheMissingField(
                     missingFields,
                     repoKey,
@@ -94,6 +97,7 @@ class Fields implements IFields {
 
             for (const filter of (repoValue?.filters || [])) {
                 const valid = filter.filter(dataValue);
+                if (dataValue === undefined || dataValue === null) break;
                 if (!valid) {
                     missingFields = arrayWithTheMissingField(
                         missingFields,
