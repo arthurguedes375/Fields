@@ -1,10 +1,10 @@
 {
   "name": "fields-validator-repo",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Valid if the fields are right",
-  "main": "index.ts",
+  "main": "./src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "clear && NODE_ENV=test jest"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/arthurguedes375/Fields/issues"
   },
-  "homepage": "https://github.com/arthurguedes375/Fields#readme"
+  "homepage": "https://github.com/arthurguedes375/Fields#readme",
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "jest": "^27.4.3",
+    "ts-jest": "^27.1.0",
+    "typescript": "^4.5.2"
+  }
 }

@@ -1,4 +1,4 @@
-import { Repository } from "./Repos";
+import { Repository } from "../Repos";
 import Fields from "./Fields";
 
 interface IFactory {
