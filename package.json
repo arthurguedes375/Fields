@@ -1,6 +1,6 @@
 {
   "name": "fields-validator-repo",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Valid if the fields are right",
   "main": "./src/index.ts",
   "scripts": {
@@ -13,7 +13,12 @@
   "keywords": [
     "fields-validator",
     "body-validator",
-    "form-validator"
+    "form-validator",
+    "data-validator",
+    "validator",
+    "filter",
+    "body-filter",
+    "data-filter"
   ],
   "author": "Arthur Guedes <arthurguedes375@gmail.com>",
   "license": "MIT",
