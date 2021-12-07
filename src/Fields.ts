@@ -1,11 +1,21 @@
 import { Filter, Repository } from "../Repos";
 
+interface InvalidField {
+    field: string;
+    message: string;
+};
+
+export interface RunFieldsReturn {
+    valid: boolean;
+    invalidFields: Array<InvalidField>;
+}
+
 interface IFields {
     readonly defaultFilters: Filter[];
     readonly repository: Repository;
     readonly data: object;
 
-    runFields(data: any, repo?: any, struct?: string): boolean | Array<string | object>;
+    runFields(data: any, repo?: any, struct?: string): RunFieldsReturn;
 }
 
 class Fields implements IFields {
@@ -22,11 +32,11 @@ class Fields implements IFields {
         "repo is the Filters and the information required to validate the data
         "struct" is the Structure of the current loop, so if some data is not allowed its gonna print out like: contact.address.street
     */
-    runFields(data?: any, repo?: Repository, struct?: string): boolean | Array<string | object> {
+    runFields(data?: any, repo?: Repository, struct?: string): RunFieldsReturn {
         repo = repo || this.repository;
         data = data || this.data;
 
-        let missingFields: Array<string | object> = [];
+        let invalidFields: Array<InvalidField> = [];
 
         // Loop through all repo keys
         for (const repoKey in repo) {
@@ -34,14 +44,13 @@ class Fields implements IFields {
 
             // If the repoKey is another repo then it is going to validate the data using the repo inside that repoKey
             if (repoValue !== null && repoValue !== undefined && !repoValue?.filters && !repoValue.maxLength) {
-                const valid = this.runFields(data[repoKey], repoValue, `${struct !== undefined ? `${struct}.` : ''}${repoKey}`)
+                const { valid, invalidFields: invalidFieldsReturned } = this.runFields(data[repoKey], repoValue, `${struct !== undefined ? `${struct}.` : ''}${repoKey}`)
 
                 // If there was any error validating the data its going to add it to missingFields
-                if (valid !== true) {
-                    const missingFieldsValid = <Array<string | object>>valid;
-                    missingFields = [
-                        ...missingFields,
-                        ...missingFieldsValid,
+                if (valid === false) {
+                    invalidFields = [
+                        ...invalidFields,
+                        ...invalidFieldsReturned,
                     ];
                 }
             }
@@ -56,18 +65,15 @@ class Fields implements IFields {
             }
 
             // "arr" is the current missing fields
-            const arrayWithTheMissingField = (arr: Array<string | object>, missingField: string, failMessage?: string) => {
+            const arrayWithTheMissingField = (arr: Array<InvalidField>, missingField: string, failMessage: string) => {
                 let array = [...arr];
 
                 const field = `${struct !== undefined ? `${struct}.` : ''}${missingField}`;
-                if (failMessage) {
-                    array.push({
-                        field,
-                        message: failMessage,
-                    })
-                } else {
-                    array.push(field);
-                }
+
+                array.push({
+                    field,
+                    message: failMessage,
+                })
 
                 return array;
             }
@@ -80,15 +86,15 @@ class Fields implements IFields {
             //The data is invalid(null || undefined) and it is not false  // Making sure that the repoValue is a field and not another repo                                                      // The required is true
             if ((!dataValue && dataValue !== false) && (repoValue === null || (repoValue !== null && ((repoValue.filters?.length || 0) > 0 || repoValue.maxLength !== undefined || repoValue.required !== undefined) && (repoValue.required === true || repoValue.required === undefined)))) {
                 // It gets here if the data is a nullish value and the field is set to null or if the field.required is set to true 
-                missingFields = arrayWithTheMissingField(
-                    missingFields,
+                invalidFields = arrayWithTheMissingField(
+                    invalidFields,
                     repoKey,
                     "This field is required and it must not be null or undefined"
                 );
                 continue;
             } else if (repoValue && repoValue.maxLength && Number.isInteger(repoValue.maxLength) && dataValue && dataValue.length > repoValue.maxLength) {
-                missingFields = arrayWithTheMissingField(
-                    missingFields,
+                invalidFields = arrayWithTheMissingField(
+                    invalidFields,
                     repoKey,
                     `The max length for this field is ${repoValue.maxLength} characters!`
                 );
@@ -99,8 +105,8 @@ class Fields implements IFields {
                 const valid = filter.filter(dataValue);
                 if (dataValue === undefined || dataValue === null) break;
                 if (!valid) {
-                    missingFields = arrayWithTheMissingField(
-                        missingFields,
+                    invalidFields = arrayWithTheMissingField(
+                        invalidFields,
                         repoKey,
                         filter.failMessage,
                     );
@@ -109,8 +115,8 @@ class Fields implements IFields {
             }
         }
 
-        if (missingFields.length > 0) return missingFields;
-        return true;
+        if (invalidFields.length > 0) return { valid: false, invalidFields };
+        return { valid: true, invalidFields: [] };
     }
 }
 
