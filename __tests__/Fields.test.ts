@@ -19,8 +19,11 @@ describe('Fields', () => {
         const Fields1 = Factory(TestRepo, data1).runFields();
         const Fields2 = Factory(TestRepo, data2).runFields();
 
-        expect(Fields1).toBe(true); // expect(Fields1.valid).toBe(true);
-        expect(Fields2).toBe(true);
+        expect(Fields1.valid).toBe(true);
+        expect(Fields2.valid).toBe(true);
+
+        expect(Fields1.invalidFields).toHaveLength(0);
+        expect(Fields2.invalidFields).toHaveLength(0);
     });
     it('should return invalid data for the notRequired with filters, maxLength, maxLength and Filters', () => {
         const generateData = (notRequiredWithFilters: string, notRequiredWithMaxLength: string, notRequiredWithMaxLengthAndFilters: string) => ({
@@ -39,7 +42,10 @@ describe('Fields', () => {
         const Fields1 = Factory(TestRepo, data1).runFields();
         const Fields2 = Factory(TestRepo, data2).runFields();
 
-        expect(Fields1).toEqual([
+        expect(Fields1.valid).toBe(false);
+        expect(Fields2.valid).toBe(false);
+
+        expect(Fields1.invalidFields).toEqual([
             {
                 field: 'notRequiredWithFilters',
                 message: 'Content is not equal to "abcde"'
@@ -53,7 +59,7 @@ describe('Fields', () => {
                 message: 'The max length for this field is 2 characters!'
             }
         ]);
-        expect(Fields2).toEqual([
+        expect(Fields2.invalidFields).toEqual([
             {
                 field: 'notRequiredWithFilters',
                 message: 'Content is not equal to "abcde"'
@@ -81,7 +87,8 @@ describe('Fields', () => {
 
         data1.forEach(data => {
             const Fields = Factory(TestRepo, data).runFields();
-            expect(Fields).toEqual([
+            expect(Fields.valid).toBe(false);
+            expect(Fields.invalidFields).toEqual([
                 {
                     field: 'requiredWithNull',
                     message: 'This field is required and it must not be null or undefined'
@@ -106,7 +113,10 @@ describe('Fields', () => {
             Factory(TestRepo, data2[1]).runFields(),
         ];
 
-        expect(Fields2[0]).toEqual([
+        expect(Fields2[0].valid).toBe(false);
+        expect(Fields2[1].valid).toBe(false);
+
+        expect(Fields2[0].invalidFields).toEqual([
             {
                 field: 'requiredWithNull',
                 message: 'This field is required and it must not be null or undefined'
@@ -125,7 +135,7 @@ describe('Fields', () => {
             }
         ]);
 
-        expect(Fields2[1]).toEqual([
+        expect(Fields2[1].invalidFields).toEqual([
             {
                 field: 'requiredWithNull',
                 message: 'This field is required and it must not be null or undefined'
