@@ -1,4 +1,4 @@
-import { Repository } from "@interfaces/Repos";
+import { Repository } from "@src/Repos";
 
 export const ValidateTestRepo: Repository = {
     notRequiredWithFilters: {
