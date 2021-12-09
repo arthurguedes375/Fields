@@ -1,6 +1,7 @@
 export interface Filter {
-    filter: Function;
-    failMessage: string;
+    type: "validate" | "sanitize";
+    filter: (data: string) => any;
+    failMessage?: string;
 }
 
 export interface Repository {

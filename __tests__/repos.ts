@@ -1,9 +1,10 @@
 import { Repository } from "Repos";
 
-export const TestRepo: Repository = {
+export const ValidateTestRepo: Repository = {
     notRequiredWithFilters: {
         filters: [
             {
+                type: "validate",
                 filter: (data: string) => {
                     if (data == "abcde") return true;
                     return false;
@@ -20,6 +21,7 @@ export const TestRepo: Repository = {
     notRequiredWithMaxLengthAndFilters: {
         filters: [
             {
+                type: "validate",
                 filter: (data: string) => {
                     if (data == "a") return true;
                     return false;
@@ -34,6 +36,7 @@ export const TestRepo: Repository = {
     requiredWithFilters: {
         filters: [
             {
+                type: "validate",
                 filter: (data: string) => {
                     if (data == "abcde") return true;
                     return false;
@@ -50,6 +53,7 @@ export const TestRepo: Repository = {
     requiredWithMaxLengthAndFilters: {
         filters: [
             {
+                type: "validate",
                 filter: (data: string) => {
                     if (data == "a") return true;
                     return false;
@@ -60,4 +64,31 @@ export const TestRepo: Repository = {
         maxLength: 2,
         required: true,
     },
+};
+
+export const SanitizeTestRepo: Repository = {
+    removingSpaces: {
+        filters: [
+            {
+                type: "validate",
+                filter: (data) => {
+                    return data.includes(" ");
+                },
+                failMessage: "There is no space",
+            },
+            {
+                type: "sanitize",
+                filter: (data) => {
+                    return data.replace(/\s/g, '');
+                }
+            },
+            {
+                type: "sanitize",
+                filter: (data) => {
+                    return `.   .${data}.   .`;
+                }
+            }
+        ],
+        required: true,
+    }
 };

@@ -1,16 +1,16 @@
 import { Repository } from "../Repos";
 import Fields from "./Fields";
 
-interface IFactory {
+interface IFactory<D> {
     readonly Repository: Repository;
-    readonly Fields: Fields;
-    readonly data: object;
+    readonly Fields: Fields<D>;
+    readonly data: D;
 }
-export class Factory implements IFactory {
+export class Factory<D> implements IFactory<D> {
     Fields;
     constructor(
         readonly Repository: Repository,
-        readonly data: object,
+        readonly data: D,
     ) {
         this.Fields = new Fields(Repository, data);
     }
@@ -20,4 +20,6 @@ export class Factory implements IFactory {
     }
 }
 
-export const FieldsFactory = (repo: Repository, data: object) => new Factory(repo, data);
+export function FieldsFactory<D>(repo: Repository, data: D) {
+    return new Factory<D>(repo, data);
+}

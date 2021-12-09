@@ -1,7 +1,7 @@
 import { Factory } from '@src/index';
-import { TestRepo } from './repos';
+import { SanitizeTestRepo, ValidateTestRepo } from './repos';
 
-describe('Fields', () => {
+describe('Fields: Validate', () => {
     it('should return valid data', () => {
         const generateData = (notRequiredWithFilters?: string, notRequiredWithMaxLength?: string, notRequiredWithMaxLengthAndFilters?: string) => ({
             notRequiredWithFilters: "abcde",
@@ -16,8 +16,8 @@ describe('Fields', () => {
         const data1 = generateData("abcde", "ab", "a");
         const data2 = generateData();
 
-        const Fields1 = Factory(TestRepo, data1).runFields();
-        const Fields2 = Factory(TestRepo, data2).runFields();
+        const Fields1 = Factory(ValidateTestRepo, data1).runFields();
+        const Fields2 = Factory(ValidateTestRepo, data2).runFields();
 
         expect(Fields1.valid).toBe(true);
         expect(Fields2.valid).toBe(true);
@@ -39,8 +39,8 @@ describe('Fields', () => {
         const data1 = generateData("abcd", "abc", "abc");
         const data2 = generateData("abcd", "abc", "ab");
 
-        const Fields1 = Factory(TestRepo, data1).runFields();
-        const Fields2 = Factory(TestRepo, data2).runFields();
+        const Fields1 = Factory(ValidateTestRepo, data1).runFields();
+        const Fields2 = Factory(ValidateTestRepo, data2).runFields();
 
         expect(Fields1.valid).toBe(false);
         expect(Fields2.valid).toBe(false);
@@ -86,7 +86,7 @@ describe('Fields', () => {
         const data2 = [generateData(null, "abcd", "abc", "abc"), generateData(null, "abcd", "abc", "ab")];
 
         data1.forEach(data => {
-            const Fields = Factory(TestRepo, data).runFields();
+            const Fields = Factory(ValidateTestRepo, data).runFields();
             expect(Fields.valid).toBe(false);
             expect(Fields.invalidFields).toEqual([
                 {
@@ -109,8 +109,8 @@ describe('Fields', () => {
         })
 
         const Fields2 = [
-            Factory(TestRepo, data2[0]).runFields(),
-            Factory(TestRepo, data2[1]).runFields(),
+            Factory(ValidateTestRepo, data2[0]).runFields(),
+            Factory(ValidateTestRepo, data2[1]).runFields(),
         ];
 
         expect(Fields2[0].valid).toBe(false);
@@ -153,5 +153,29 @@ describe('Fields', () => {
                 message: 'Content is not equal to "a"'
             }
         ]);
+    });
+});
+
+describe('Fields: Sanitize', () => {
+    it('should only sanitize the data if it has been validated', () => {
+        const generateData = (removingSpaces: string) => ({ removingSpaces });
+
+        const Fields = [
+            Factory(SanitizeTestRepo, generateData("abc")).runFields(),
+            Factory(SanitizeTestRepo, generateData("ab c")).runFields(),
+        ];
+
+        expect(Fields[0].valid).toBe(false);
+        expect(Fields[0].invalidFields).toEqual([
+            {
+                field: 'removingSpaces',
+                message: 'There is no space'
+            }
+        ]);
+        expect(Fields[0].sanitizedFields.removingSpaces).toBe(undefined);
+
+        expect(Fields[1].valid).toBe(true);
+        expect(Fields[1].invalidFields).toEqual([]);
+        expect(Fields[1].sanitizedFields.removingSpaces).toBe(".   .abc.   .");
     });
 });
