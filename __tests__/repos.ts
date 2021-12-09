@@ -1,4 +1,4 @@
-import { Repository } from "Repos";
+import { Repository } from "@interfaces/Repos";
 
 export const ValidateTestRepo: Repository = {
     notRequiredWithFilters: {
@@ -71,20 +71,20 @@ export const SanitizeTestRepo: Repository = {
         filters: [
             {
                 type: "validate",
-                filter: (data) => {
+                filter: (data: any) => {
                     return data.includes(" ");
                 },
                 failMessage: "There is no space",
             },
             {
                 type: "sanitize",
-                filter: (data) => {
+                filter: (data: any) => {
                     return data.replace(/\s/g, '');
                 }
             },
             {
                 type: "sanitize",
-                filter: (data) => {
+                filter: (data: any) => {
                     return `.   .${data}.   .`;
                 }
             }
