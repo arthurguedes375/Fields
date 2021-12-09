@@ -86,10 +86,8 @@ class Fields<D> implements IFields<D> {
                 return array;
             }
 
-
             // "dataValue" is the data with the same key as the current repoKey
             const dataValue = (<any>data)[repoKey];
-
 
             //The data is invalid(null || undefined) and it is not false  // Making sure that the repoValue is a field and not another repo                                                      // The required is true
             if ((!dataValue && dataValue !== false) && ((repoValue.filters?.length || 0) > 0 || repoValue.maxLength !== undefined || repoValue.required !== undefined) && (repoValue.required === true || repoValue.required === undefined)) {
