@@ -1,6 +1,6 @@
 {
   "name": "fields-validator-repo",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Valid if the fields are right",
   "main": "./src/index.ts",
   "scripts": {
