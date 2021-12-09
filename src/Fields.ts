@@ -1,4 +1,4 @@
-import { Filter, Repository } from "@interfaces/Repos";
+import { Filter, Repository } from "./Repos";
 
 interface InvalidField {
     field: string;

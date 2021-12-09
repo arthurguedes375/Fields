@@ -1,5 +1,5 @@
 import Fields from './Fields';
-import { Repository } from '@interfaces/Repos';
+import { Repository } from './Repos';
 import { Factory as FactoryClass, FieldsFactory as Factory } from './Factory';
 
 export {
