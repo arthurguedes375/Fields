@@ -1,11 +1,9 @@
 {
   "name": "fields-validator-repo",
+  "author": "Arthur Guedes <arthurguedes375@gmail.com>",
   "version": "4.0.1",
+  "main": "./lib/index.js",
   "description": "Valid if the fields are right",
-  "main": "./src/index.ts",
-  "scripts": {
-    "test": "clear && NODE_ENV=test jest"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arthurguedes375/Fields.git"
@@ -20,16 +18,29 @@
     "body-filter",
     "data-filter"
   ],
-  "author": "Arthur Guedes <arthurguedes375@gmail.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/arthurguedes375/Fields/issues"
   },
   "homepage": "https://github.com/arthurguedes375/Fields#readme",
+  "scripts": {
+    "test": "clear && NODE_ENV=test jest",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch",
+    "build": "yarn build:types && yarn build:js && rm -R lib/__tests__",
+    "build:types": "tsc --emitDeclarationOnly && mv lib/src/* lib && rmdir lib/src",
+    "build:js": "babel src --out-dir lib --extensions \".js,.ts\" --source-maps inline"
+  },
   "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
     "@types/jest": "^27.0.3",
+    "babel-plugin-module-resolver": "^4.0.0",
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",
     "typescript": "^4.5.2"
-  }
+  },
+  "license": "MIT"
 }
