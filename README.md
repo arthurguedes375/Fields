@@ -6,10 +6,13 @@ This library validates data based on a Repository which is a Schema with the Fil
 ## Tips :bulb:
 A good way to see how it actually works is reading the tests.
 
-## Repository(Schema):
-The Schema follows a pattern, first you set the field name, then you set it as null if you want it to be required or set it as an object which can be either another schema or it could be the filters and settings for that field.
 
-So if you expect to receive a object with the property called "name" and you don't want it to have any nullish value then the schema is going to be:
+# Documentation:
+
+## Repository(Schema):
+The Schema follows a pattern, first you set the field name, then you set it as null if you want it to be required or set it as an object which can be either another schema or it could be the settings for that field.
+
+So for example, if you expect to receive a object with the property called "name" and you don't want it to have any nullish value then the schema is going to be:
 ```javascript
 // Both are the same
 {
@@ -24,7 +27,7 @@ So if you expect to receive a object with the property called "name" and you don
 /* Setting the field as null is the same as setting it as an object with only the "required: true" property*/
 ```
 
-If you want to allow nullish values like(```null``` or ```undefined``` or ```""```) you can set the required to false. The schema would be:
+If you want to allow nullish values like(```null``` or ```undefined``` or ```""```) you can set the ```required``` to ```false```. The schema would be:
 ```javascript
 {
     name: {
@@ -41,7 +44,7 @@ If you want to allow nullish values like(```null``` or ```undefined``` or ```""`
 ### Property: ```required```
 The default value is: ```true```
 
-If it's set to true then it's not going to allow nullish values like: ```null```, ```undefined```, ```""```
+If it's set to true then it's not going to allow nullish values like: ```null``` or ```undefined``` or ```""```
 
 ---
 ### Property: ```maxLength```
@@ -56,9 +59,9 @@ It's an array of filters, later on in this tutorial you'll learn how to create y
 ## Filters
 A filter can be either a ```validate``` filter or a ```sanitize``` filter.
 A filter is an object with this properties:
-- ```type```: Can be either ```validate``` or ```sanitize```
+- ```type```: Can be either ```"validate"``` or ```"sanitize"```
 - ```filter```: It is a function, and based on the filter type it returns either a sanitized data or a boolean that indicates if the data is valid or not
-- ```failMessage```: It is the message that is going to be returned if the filter function returns ```false```, it can only be used if the filter type is ```validate```
+- ```failMessage```: It is the message that is going to be returned if the filter function returns ```false```, it can only be used if the filter type is ```"validate"```
 
 First it runs all validate filters, if all of them return ```true```(that means that the data was successfully validated and that the data is valid) only then it runs all sanitize filters, if there are more than one sanitize filter then it passes the returned data from one filter to the next one and so on.
 
@@ -81,7 +84,7 @@ The property called ```failMessage``` is the message that is returned to the use
 
 ---
 ### Sanitize Filter
-The property called ```filter``` is a function that receives the ```data``` which could be of any kind, and it returns the sanitized data, in the next example it gets a ```string``` and it removes all white spaces, then it returns the ```string``` without any white spaces.
+The property called ```filter``` is a function that receives the ```data``` which could be of any kind, and it returns the sanitized data, in the next example it gets a ```string``` and it removes all white spaces, then it returns the ```string``` without any white space.
 
 A sanitize filter looks like:
 ```javascript
