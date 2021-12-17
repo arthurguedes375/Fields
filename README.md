@@ -1,7 +1,7 @@
 # @arthurguedes375/fields-validator-repo
 
 ## About
-This library validates data based on a Repository which is a Schema with the Filters and the structure expected from the data
+This library validates data based on a Schema with the Filters and the structure expected from the data
 
 ## Tips :bulb:
 A good way to see how it actually works is reading the tests.
@@ -9,7 +9,7 @@ A good way to see how it actually works is reading the tests.
 
 # Documentation:
 
-## Repository(Schema):
+## Schema:
 The Schema follows a pattern, first you set the field name, then you set it as null if you want it to be required or set it as an object which can be either another schema or it could be the settings for that field.
 
 So for example, if you expect to receive a object with the property called "name" and you don't want it to have any nullish value then the schema is going to be:

@@ -1,5 +1,5 @@
 import { Factory } from '@src/index';
-import { SanitizeTestRepo, ValidateTestRepo } from './repos';
+import { SanitizeTestSchema, ValidateTestSchema } from './schemas';
 
 describe('Fields: Validate', () => {
     it('should return valid data', () => {
@@ -16,8 +16,8 @@ describe('Fields: Validate', () => {
         const data1 = generateData("abcde", "ab", "a");
         const data2 = generateData();
 
-        const Fields1 = Factory(ValidateTestRepo, data1).runFields();
-        const Fields2 = Factory(ValidateTestRepo, data2).runFields();
+        const Fields1 = Factory(ValidateTestSchema, data1).runFields();
+        const Fields2 = Factory(ValidateTestSchema, data2).runFields();
 
         expect(Fields1.valid).toBe(true);
         expect(Fields2.valid).toBe(true);
@@ -39,8 +39,8 @@ describe('Fields: Validate', () => {
         const data1 = generateData("abcd", "abc", "abc");
         const data2 = generateData("abcd", "abc", "ab");
 
-        const Fields1 = Factory(ValidateTestRepo, data1).runFields();
-        const Fields2 = Factory(ValidateTestRepo, data2).runFields();
+        const Fields1 = Factory(ValidateTestSchema, data1).runFields();
+        const Fields2 = Factory(ValidateTestSchema, data2).runFields();
 
         expect(Fields1.valid).toBe(false);
         expect(Fields2.valid).toBe(false);
@@ -86,7 +86,7 @@ describe('Fields: Validate', () => {
         const data2 = [generateData(null, "abcd", "abc", "abc"), generateData(null, "abcd", "abc", "ab")];
 
         data1.forEach(data => {
-            const Fields = Factory(ValidateTestRepo, data).runFields();
+            const Fields = Factory(ValidateTestSchema, data).runFields();
             expect(Fields.valid).toBe(false);
             expect(Fields.invalidFields).toEqual([
                 {
@@ -109,8 +109,8 @@ describe('Fields: Validate', () => {
         })
 
         const Fields2 = [
-            Factory(ValidateTestRepo, data2[0]).runFields(),
-            Factory(ValidateTestRepo, data2[1]).runFields(),
+            Factory(ValidateTestSchema, data2[0]).runFields(),
+            Factory(ValidateTestSchema, data2[1]).runFields(),
         ];
 
         expect(Fields2[0].valid).toBe(false);
@@ -161,8 +161,8 @@ describe('Fields: Sanitize', () => {
         const generateData = (removingSpaces: string) => ({ removingSpaces });
 
         const Fields = [
-            Factory(SanitizeTestRepo, generateData("abc")).runFields(),
-            Factory(SanitizeTestRepo, generateData("ab c")).runFields(),
+            Factory(SanitizeTestSchema, generateData("abc")).runFields(),
+            Factory(SanitizeTestSchema, generateData("ab c")).runFields(),
         ];
 
         expect(Fields[0].valid).toBe(false);

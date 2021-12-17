@@ -1,11 +1,11 @@
 import Fields from './Fields';
-import { Repository } from './Repos';
+import { Schema } from './Interfaces';
 import { Factory as FactoryClass, FieldsFactory as Factory } from './Factory';
 
 export {
     Factory,
     FactoryClass,
-    Repository,
+    Schema,
     Fields
 };
 export default Factory;

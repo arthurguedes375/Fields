@@ -4,9 +4,9 @@ export interface Filter {
     failMessage?: string;
 }
 
-export interface Repository {
+export interface Schema {
     filters?: Array<Filter>;
     maxLength?: number;
     required?: boolean;
-    [key: string]: Repository | Array<Filter> | number | boolean | undefined | null;
+    [key: string]: Schema | Array<Filter> | number | boolean | undefined | null;
 }

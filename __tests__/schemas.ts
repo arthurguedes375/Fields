@@ -1,6 +1,6 @@
-import { Repository } from "@src/Repos";
+import { Schema } from "@src/Interfaces";
 
-export const ValidateTestRepo: Repository = {
+export const ValidateTestSchema: Schema = {
     notRequiredWithFilters: {
         filters: [
             {
@@ -66,7 +66,7 @@ export const ValidateTestRepo: Repository = {
     },
 };
 
-export const SanitizeTestRepo: Repository = {
+export const SanitizeTestSchema: Schema = {
     removingSpaces: {
         filters: [
             {

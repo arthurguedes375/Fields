@@ -1,4 +1,4 @@
-import { Filter, Repository } from "./Repos";
+import { Filter, Schema } from "./Interfaces";
 
 interface InvalidField {
     field: string;
@@ -13,10 +13,10 @@ export interface RunFieldsReturn<D> {
 
 interface IFields<D> {
     readonly defaultFilters: Filter[];
-    readonly repository: Repository;
+    readonly schema: Schema;
     readonly data: D;
 
-    runFields(data: D, repo?: any, struct?: string): RunFieldsReturn<D>;
+    runFields(data: D, schema?: any, struct?: string): RunFieldsReturn<D>;
 }
 
 class Fields<D> implements IFields<D> {
@@ -24,22 +24,22 @@ class Fields<D> implements IFields<D> {
     readonly defaultFilters: Filter[] = [];
 
     constructor(
-        readonly repository: Repository,
+        readonly schema: Schema,
         readonly data: D,
     ) { };
 
     /* 
         "data" is the data to be filtered
-        "repo is the Filters and the information required to validate the data
+        "schema" is the Filters and the information required to validate the data
         "struct" is the Structure of the current loop, so if some data is not allowed its gonna print out like: contact.address.street
     */
-    runFields<D2 = D>(data?: D2 | D, repo?: Repository, struct?: string): RunFieldsReturn<D> {
-        repo = repo || this.repository;
+    runFields<D2 = D>(data?: D2 | D, schema?: Schema, struct?: string): RunFieldsReturn<D> {
+        schema = schema || this.schema;
         data = data || this.data;
 
-        for (const repoKey in repo) {
-            if (repo[repoKey] === null) {
-                repo[repoKey] = {
+        for (const schemaKey in schema) {
+            if (schema[schemaKey] === null) {
+                schema[schemaKey] = {
                     filters: [],
                     required: true,
                 }
@@ -49,14 +49,14 @@ class Fields<D> implements IFields<D> {
         let invalidFields: Array<InvalidField> = [];
         let sanitizedFields: D = <any>{};
 
-        // Loop through all repo keys
-        for (const repoKey in repo) {
-            const repoValue = <Repository>repo[repoKey];
+        // Loop through all schema keys
+        for (const schemaKey in schema) {
+            const schemaValue = <Schema>schema[schemaKey];
 
-            // If the repoKey is another repo then it is going to validate the data using the repo inside that repoKey
-            if (repoValue !== null && repoValue !== undefined && (repoValue.required !== true && repoValue.required !== false) && !repoValue.filters && !repoValue.maxLength) {
-                const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = this.runFields((<any>data)[repoKey], repoValue, `${struct !== undefined ? `${struct}.` : ''}${repoKey}`);
-                (<any>sanitizedFields)[repoKey] = sanitizedFieldsReturned;
+            // If the schemaKey is another schema then it is going to validate the data using the schema inside that schemaKey
+            if (schemaValue !== null && schemaValue !== undefined && (schemaValue.required !== true && schemaValue.required !== false) && !schemaValue.filters && !schemaValue.maxLength) {
+                const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = this.runFields((<any>data)[schemaKey], schemaValue, `${struct !== undefined ? `${struct}.` : ''}${schemaKey}`);
+                (<any>sanitizedFields)[schemaKey] = sanitizedFieldsReturned;
                 // If there was any error validating the data its going to add it to invalidFields
                 if (valid === false) {
                     invalidFields = [
@@ -67,8 +67,8 @@ class Fields<D> implements IFields<D> {
             }
 
             // Adding default filters
-            repoValue.filters = [
-                ...repoValue.filters || [],
+            schemaValue.filters = [
+                ...schemaValue.filters || [],
                 ...this.defaultFilters,
             ];
 
@@ -86,29 +86,29 @@ class Fields<D> implements IFields<D> {
                 return array;
             }
 
-            // "dataValue" is the data with the same key as the current repoKey
-            const dataValue = (<any>data)[repoKey];
+            // "dataValue" is the data with the same key as the current schemaKey
+            const dataValue = (<any>data)[schemaKey];
 
-            //The data is invalid(null || undefined) and it is not false  // Making sure that the repoValue is a field and not another repo                                                      // The required is true
-            if ((!dataValue && dataValue !== false) && ((repoValue.filters?.length || 0) > 0 || repoValue.maxLength !== undefined || repoValue.required !== undefined) && (repoValue.required === true || repoValue.required === undefined)) {
+            //The data is invalid(null || undefined) and it is not false  // Making sure that the schemaValue is a field and not another schema                                                      // The required is true
+            if ((!dataValue && dataValue !== false) && ((schemaValue.filters?.length || 0) > 0 || schemaValue.maxLength !== undefined || schemaValue.required !== undefined) && (schemaValue.required === true || schemaValue.required === undefined)) {
                 // It gets here if the data is a nullish value and the field is set to null or if the field.required is set to true 
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
-                    repoKey,
+                    schemaKey,
                     "This field is required and it must not be null or undefined"
                 );
                 continue;
-            } else if (repoValue && repoValue.maxLength && Number.isInteger(repoValue.maxLength) && dataValue && dataValue.length > repoValue.maxLength) {
+            } else if (schemaValue && schemaValue.maxLength && Number.isInteger(schemaValue.maxLength) && dataValue && dataValue.length > schemaValue.maxLength) {
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
-                    repoKey,
-                    `The max length for this field is ${repoValue.maxLength} characters!`
+                    schemaKey,
+                    `The max length for this field is ${schemaValue.maxLength} characters!`
                 );
                 continue;
             }
 
-            const validateFilters = repoValue.filters.filter(filter => filter.type === "validate") || [];
-            const sanitizeFilters = repoValue.filters.filter(filter => filter.type === "sanitize") || [];
+            const validateFilters = schemaValue.filters.filter(filter => filter.type === "validate") || [];
+            const sanitizeFilters = schemaValue.filters.filter(filter => filter.type === "sanitize") || [];
 
             let validatedByFilters = true;
 
@@ -118,7 +118,7 @@ class Fields<D> implements IFields<D> {
                 if (!valid) {
                     invalidFields = arrayWithInvalidField(
                         invalidFields,
-                        repoKey,
+                        schemaKey,
                         validateFilter.failMessage || "",
                     );
                     validatedByFilters = false;
@@ -134,7 +134,7 @@ class Fields<D> implements IFields<D> {
                 sanitizedData = sanitizeFilter.filter(sanitizedData);
             }
 
-            (<any>sanitizedFields)[repoKey] = sanitizedData;
+            (<any>sanitizedFields)[schemaKey] = sanitizedData;
         }
 
         if (invalidFields.length > 0) return { valid: false, invalidFields, sanitizedFields };
