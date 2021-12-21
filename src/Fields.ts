@@ -107,7 +107,7 @@ class Fields<D> implements IFields<D> {
                 continue;
             }
 
-            if (!dataValue) continue;
+            if (!dataValue && schemaValue.required === false) continue;
 
             const validateFilters = schemaValue.filters.filter(filter => filter.type === "validate") || [];
             const sanitizeFilters = schemaValue.filters.filter(filter => filter.type === "sanitize") || [];
