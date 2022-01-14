@@ -4,9 +4,9 @@ import { SanitizeTestSchema, ValidateTestSchema } from './schemas';
 describe('Fields: Validate', () => {
     it('should return valid data', () => {
         const generateData = (notRequiredWithFilters?: string, notRequiredWithMaxLength?: string, notRequiredWithMaxLengthAndFilters?: string) => ({
-            notRequiredWithFilters: "abcde",
-            notRequiredWithMaxLength: "ab",
-            notRequiredWithMaxLengthAndFilters: "a",
+            notRequiredWithFilters,
+            notRequiredWithMaxLength,
+            notRequiredWithMaxLengthAndFilters,
             requiredWithNull: "a",
             requiredWithFilters: "abcde",
             requiredWithMaxLength: "ab",
