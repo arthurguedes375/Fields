@@ -7,6 +7,7 @@ describe('Fields: Validate', () => {
             notRequiredWithFilters,
             notRequiredWithMaxLength,
             notRequiredWithMaxLengthAndFilters,
+            requiredWithValidationOnly: "a",
             requiredWithNull: "a",
             requiredWithFilters: "abcde",
             requiredWithMaxLength: "ab",
@@ -24,12 +25,14 @@ describe('Fields: Validate', () => {
 
         expect(Fields1.invalidFields).toHaveLength(0);
         expect(Fields2.invalidFields).toHaveLength(0);
+        expect(Fields2.sanitizedFields.requiredWithValidationOnly).toBeUndefined();
     });
     it('should return invalid data for the notRequired with filters, maxLength, maxLength and Filters', () => {
         const generateData = (notRequiredWithFilters: string, notRequiredWithMaxLength: string, notRequiredWithMaxLengthAndFilters: string) => ({
             notRequiredWithFilters,
             notRequiredWithMaxLength,
             notRequiredWithMaxLengthAndFilters,
+            requiredWithValidationOnly: "a",
             requiredWithNull: "a",
             requiredWithFilters: "abcde",
             requiredWithMaxLength: "ab",
@@ -76,6 +79,7 @@ describe('Fields: Validate', () => {
     });
     it('should return invalid data for the required with null, filters, maxLength, maxLength and filters', () => {
         const generateData = (value: null | undefined | "", requiredWithFilters?: string, requiredWithMaxLength?: string, requiredWithMaxLengthAndFilters?: string) => ({
+            requiredWithValidationOnly: value,
             requiredWithNull: value,
             requiredWithFilters: (requiredWithFilters !== undefined) ? requiredWithFilters : value,
             requiredWithMaxLength: (requiredWithMaxLength !== undefined) ? requiredWithMaxLength : value,
@@ -89,6 +93,10 @@ describe('Fields: Validate', () => {
             const Fields = Factory(ValidateTestSchema, data).runFields();
             expect(Fields.valid).toBe(false);
             expect(Fields.invalidFields).toEqual([
+                {
+                    field: "requiredWithValidationOnly",
+                    message: "This field is required and it must not be null or undefined",
+                },
                 {
                     field: 'requiredWithNull',
                     message: 'This field is required and it must not be null or undefined'
@@ -118,6 +126,10 @@ describe('Fields: Validate', () => {
 
         expect(Fields2[0].invalidFields).toEqual([
             {
+                field: 'requiredWithValidationOnly',
+                message: 'This field is required and it must not be null or undefined'
+            },
+            {
                 field: 'requiredWithNull',
                 message: 'This field is required and it must not be null or undefined'
             },
@@ -136,6 +148,10 @@ describe('Fields: Validate', () => {
         ]);
 
         expect(Fields2[1].invalidFields).toEqual([
+            {
+                field: 'requiredWithValidationOnly',
+                message: 'This field is required and it must not be null or undefined'
+            },
             {
                 field: 'requiredWithNull',
                 message: 'This field is required and it must not be null or undefined'

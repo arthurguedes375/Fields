@@ -32,6 +32,17 @@ export const ValidateTestSchema: Schema = {
         maxLength: 2,
         required: false,
     },
+    requiredWithValidationOnly: {
+        filters: [
+            {
+                type: 'validate',
+                filter: (data: any) => true,
+                failMessage: "",
+            }
+        ],
+        required: true,
+        validationOnly: true,
+    },
     requiredWithNull: null,
     requiredWithFilters: {
         filters: [

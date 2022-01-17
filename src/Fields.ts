@@ -54,7 +54,12 @@ class Fields<D> implements IFields<D> {
             const schemaValue = <Schema>schema[schemaKey];
 
             // If the schemaKey is another schema then it is going to validate the data using the schema inside that schemaKey
-            if (schemaValue !== null && schemaValue !== undefined && (schemaValue.required !== true && schemaValue.required !== false) && !schemaValue.filters && !schemaValue.maxLength) {
+            if (schemaValue !== null && schemaValue !== undefined &&
+                (schemaValue.required !== true && schemaValue.required !== false)
+                && (schemaValue.validationOnly !== true && schemaValue.validationOnly !== false)
+                && !schemaValue.filters
+                && !schemaValue.maxLength
+            ) {
                 const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = this.runFields((<any>data)[schemaKey], schemaValue, `${struct !== undefined ? `${struct}.` : ''}${schemaKey}`);
                 (<any>sanitizedFields)[schemaKey] = sanitizedFieldsReturned;
                 // If there was any error validating the data its going to add it to invalidFields
@@ -107,7 +112,7 @@ class Fields<D> implements IFields<D> {
                 continue;
             }
 
-            if (!dataValue && schemaValue.required === false) continue;
+            if ((!dataValue && dataValue !== false) && schemaValue.required === false) continue;
 
             const validateFilters = schemaValue.filters.filter(filter => filter.type === "validate") || [];
             const sanitizeFilters = schemaValue.filters.filter(filter => filter.type === "sanitize") || [];
@@ -116,7 +121,6 @@ class Fields<D> implements IFields<D> {
 
             for (const validateFilter of validateFilters) {
                 const valid = validateFilter.filter(dataValue);
-                if (dataValue === undefined || dataValue === null) break;
                 if (!valid) {
                     invalidFields = arrayWithInvalidField(
                         invalidFields,
@@ -128,7 +132,7 @@ class Fields<D> implements IFields<D> {
                 }
             }
 
-            if (!validatedByFilters) continue;
+            if (!validatedByFilters || schemaValue.validationOnly) continue;
 
             let sanitizedData = dataValue;
 

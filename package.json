@@ -1,7 +1,7 @@
 {
   "name": "fields-validator-repo",
   "author": "Arthur Guedes <arthurguedes375@gmail.com>",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "description": "Valid if the fields are right",
