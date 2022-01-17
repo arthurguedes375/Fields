@@ -7,7 +7,7 @@ describe('Fields: Validate', () => {
             notRequiredWithFilters,
             notRequiredWithMaxLength,
             notRequiredWithMaxLengthAndFilters,
-            requiredWithValidationOnly: "a",
+            requiredWithValidationOnly: "abc",
             requiredWithNull: "a",
             requiredWithFilters: "abcde",
             requiredWithMaxLength: "ab",
@@ -32,7 +32,7 @@ describe('Fields: Validate', () => {
             notRequiredWithFilters,
             notRequiredWithMaxLength,
             notRequiredWithMaxLengthAndFilters,
-            requiredWithValidationOnly: "a",
+            requiredWithValidationOnly: "abc",
             requiredWithNull: "a",
             requiredWithFilters: "abcde",
             requiredWithMaxLength: "ab",
@@ -78,8 +78,8 @@ describe('Fields: Validate', () => {
         ]);
     });
     it('should return invalid data for the required with null, filters, maxLength, maxLength and filters', () => {
-        const generateData = (value: null | undefined | "", requiredWithFilters?: string, requiredWithMaxLength?: string, requiredWithMaxLengthAndFilters?: string) => ({
-            requiredWithValidationOnly: value,
+        const generateData = (value: null | undefined | "", requiredWithFilters?: string, requiredWithMaxLength?: string, requiredWithMaxLengthAndFilters?: string, requiredWithValidationOnly?: string) => ({
+            requiredWithValidationOnly: (requiredWithValidationOnly !== undefined) ? requiredWithValidationOnly : value,
             requiredWithNull: value,
             requiredWithFilters: (requiredWithFilters !== undefined) ? requiredWithFilters : value,
             requiredWithMaxLength: (requiredWithMaxLength !== undefined) ? requiredWithMaxLength : value,
@@ -87,7 +87,7 @@ describe('Fields: Validate', () => {
         });
 
         const data1 = [generateData(null), generateData(undefined), generateData("")];
-        const data2 = [generateData(null, "abcd", "abc", "abc"), generateData(null, "abcd", "abc", "ab")];
+        const data2 = [generateData(null, "abcd", "abc", "abc", "aaaaa"), generateData(null, "abcd", "abc", "ab")];
 
         data1.forEach(data => {
             const Fields = Factory(ValidateTestSchema, data).runFields();
@@ -123,11 +123,11 @@ describe('Fields: Validate', () => {
 
         expect(Fields2[0].valid).toBe(false);
         expect(Fields2[1].valid).toBe(false);
-
+        
         expect(Fields2[0].invalidFields).toEqual([
             {
                 field: 'requiredWithValidationOnly',
-                message: 'This field is required and it must not be null or undefined'
+                message: 'Content is not equal to "abc"'
             },
             {
                 field: 'requiredWithNull',

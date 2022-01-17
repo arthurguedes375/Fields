@@ -36,8 +36,8 @@ export const ValidateTestSchema: Schema = {
         filters: [
             {
                 type: 'validate',
-                filter: (data: any) => true,
-                failMessage: "",
+                filter: (data: any) => data === "abc",
+                failMessage: 'Content is not equal to "abc"',
             }
         ],
         required: true,
