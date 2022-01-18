@@ -2,7 +2,7 @@ import { Factory } from '@src/index';
 import { SanitizeTestSchema, ValidateTestSchema } from './schemas';
 
 describe('Fields: Validate', () => {
-    it('should return valid data', () => {
+    it('should return valid data', async () => {
         const generateData = (notRequiredWithFilters?: string, notRequiredWithMaxLength?: string, notRequiredWithMaxLengthAndFilters?: string) => ({
             notRequiredWithFilters,
             notRequiredWithMaxLength,
@@ -17,8 +17,8 @@ describe('Fields: Validate', () => {
         const data1 = generateData("abcde", "ab", "a");
         const data2 = generateData();
 
-        const Fields1 = Factory(ValidateTestSchema, data1).runFields();
-        const Fields2 = Factory(ValidateTestSchema, data2).runFields();
+        const Fields1 = await Factory(ValidateTestSchema, data1).runFields();
+        const Fields2 = await Factory(ValidateTestSchema, data2).runFields();
 
         expect(Fields1.valid).toBe(true);
         expect(Fields2.valid).toBe(true);
@@ -27,7 +27,7 @@ describe('Fields: Validate', () => {
         expect(Fields2.invalidFields).toHaveLength(0);
         expect(Fields2.sanitizedFields.requiredWithValidationOnly).toBeUndefined();
     });
-    it('should return invalid data for the notRequired with filters, maxLength, maxLength and Filters', () => {
+    it('should return invalid data for the notRequired with filters, maxLength, maxLength and Filters', async () => {
         const generateData = (notRequiredWithFilters: string, notRequiredWithMaxLength: string, notRequiredWithMaxLengthAndFilters: string) => ({
             notRequiredWithFilters,
             notRequiredWithMaxLength,
@@ -42,8 +42,8 @@ describe('Fields: Validate', () => {
         const data1 = generateData("abcd", "abc", "abc");
         const data2 = generateData("abcd", "abc", "ab");
 
-        const Fields1 = Factory(ValidateTestSchema, data1).runFields();
-        const Fields2 = Factory(ValidateTestSchema, data2).runFields();
+        const Fields1 = await Factory(ValidateTestSchema, data1).runFields();
+        const Fields2 = await Factory(ValidateTestSchema, data2).runFields();
 
         expect(Fields1.valid).toBe(false);
         expect(Fields2.valid).toBe(false);
@@ -77,7 +77,7 @@ describe('Fields: Validate', () => {
             }
         ]);
     });
-    it('should return invalid data for the required with null, filters, maxLength, maxLength and filters', () => {
+    it('should return invalid data for the required with null, filters, maxLength, maxLength and filters', async () => {
         const generateData = (value: null | undefined | "", requiredWithFilters?: string, requiredWithMaxLength?: string, requiredWithMaxLengthAndFilters?: string, requiredWithValidationOnly?: string) => ({
             requiredWithValidationOnly: (requiredWithValidationOnly !== undefined) ? requiredWithValidationOnly : value,
             requiredWithNull: value,
@@ -89,8 +89,8 @@ describe('Fields: Validate', () => {
         const data1 = [generateData(null), generateData(undefined), generateData("")];
         const data2 = [generateData(null, "abcd", "abc", "abc", "aaaaa"), generateData(null, "abcd", "abc", "ab")];
 
-        data1.forEach(data => {
-            const Fields = Factory(ValidateTestSchema, data).runFields();
+        data1.forEach(async (data) => {
+            const Fields = await Factory(ValidateTestSchema, data).runFields();
             expect(Fields.valid).toBe(false);
             expect(Fields.invalidFields).toEqual([
                 {
@@ -117,8 +117,8 @@ describe('Fields: Validate', () => {
         })
 
         const Fields2 = [
-            Factory(ValidateTestSchema, data2[0]).runFields(),
-            Factory(ValidateTestSchema, data2[1]).runFields(),
+            await Factory(ValidateTestSchema, data2[0]).runFields(),
+            await Factory(ValidateTestSchema, data2[1]).runFields(),
         ];
 
         expect(Fields2[0].valid).toBe(false);
@@ -173,12 +173,12 @@ describe('Fields: Validate', () => {
 });
 
 describe('Fields: Sanitize', () => {
-    it('should only sanitize the data if it has been validated', () => {
+    it('should only sanitize the data if it has been validated', async () => {
         const generateData = (removingSpaces: string) => ({ removingSpaces });
 
         const Fields = [
-            Factory(SanitizeTestSchema, generateData("abc")).runFields(),
-            Factory(SanitizeTestSchema, generateData("ab c")).runFields(),
+            await Factory(SanitizeTestSchema, generateData("abc")).runFields(),
+            await Factory(SanitizeTestSchema, generateData("ab c")).runFields(),
         ];
 
         expect(Fields[0].valid).toBe(false);
