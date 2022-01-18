@@ -16,7 +16,7 @@ interface IFields<D> {
     readonly schema: Schema;
     readonly data: D;
 
-    runFields(data: D, schema?: any, struct?: string): RunFieldsReturn<D>;
+    runFields(data: D, schema?: any, struct?: string): Promise<RunFieldsReturn<D>>;
 }
 
 class Fields<D> implements IFields<D> {
@@ -33,7 +33,7 @@ class Fields<D> implements IFields<D> {
         "schema" is the Filters and the information required to validate the data
         "struct" is the Structure of the current loop, so if some data is not allowed its gonna print out like: contact.address.street
     */
-    runFields<D2 = D>(data?: D2 | D, schema?: Schema, struct?: string): RunFieldsReturn<D> {
+    async runFields<D2 = D>(data?: D2 | D, schema?: Schema, struct?: string): Promise<RunFieldsReturn<D>> {
         schema = schema || this.schema;
         data = data || this.data;
 
@@ -60,7 +60,7 @@ class Fields<D> implements IFields<D> {
                 && !schemaValue.filters
                 && !schemaValue.maxLength
             ) {
-                const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = this.runFields((<any>data)[schemaKey], schemaValue, `${struct !== undefined ? `${struct}.` : ''}${schemaKey}`);
+                const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = await this.runFields((<any>data)[schemaKey], schemaValue, `${struct !== undefined ? `${struct}.` : ''}${schemaKey}`);
                 (<any>sanitizedFields)[schemaKey] = sanitizedFieldsReturned;
                 // If there was any error validating the data its going to add it to invalidFields
                 if (valid === false) {
@@ -120,7 +120,7 @@ class Fields<D> implements IFields<D> {
             let validatedByFilters = true;
 
             for (const validateFilter of validateFilters) {
-                const valid = validateFilter.filter(dataValue);
+                const valid = await validateFilter.filter(dataValue);
                 if (!valid) {
                     invalidFields = arrayWithInvalidField(
                         invalidFields,
@@ -137,7 +137,7 @@ class Fields<D> implements IFields<D> {
             let sanitizedData = dataValue;
 
             for (const sanitizeFilter of sanitizeFilters) {
-                sanitizedData = sanitizeFilter.filter(sanitizedData);
+                sanitizedData = await sanitizeFilter.filter(sanitizedData);
             }
 
             (<any>sanitizedFields)[schemaKey] = sanitizedData;

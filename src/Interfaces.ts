@@ -1,6 +1,6 @@
 export interface Filter {
     type: "validate" | "sanitize";
-    filter: (data: any) => any;
+    filter: (data: any) => Promise<any> | any;
     failMessage?: string;
 }
 
