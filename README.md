@@ -39,6 +39,7 @@ If you want to allow nullish values like(```null``` or ```undefined``` or ```""`
 ## Field properties:
 - ```required```
 - ```maxLength```
+- ```validationOnly```
 - ```filters```
 ---
 ### Property: ```required```
@@ -49,6 +50,12 @@ If it's set to true then it's not going to allow nullish values like: ```null```
 ---
 ### Property: ```maxLength```
 Sets the max length for the received ```string```
+
+---
+### Property: ```validationOnly```
+The default value is: ```false```
+
+If true the field is not going to be added to the sanitizedFields, the field is going to be validated but it is not going to be in the output.
 
 ---
 ### Property: ```filters```
