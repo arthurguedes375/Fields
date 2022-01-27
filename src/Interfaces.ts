@@ -2,7 +2,7 @@ export interface Filter {
     /**
      * Defines the type of the filter.
      */
-    type: "validate" | "sanitize";
+    type: 'validate' | 'sanitize';
 
     /**
      * Filter function,

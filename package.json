@@ -24,9 +24,10 @@
   },
   "homepage": "https://github.com/arthurguedes375/Fields#readme",
   "scripts": {
-    "test": "clear && NODE_ENV=test jest",
+    "lint-test": "yarn eslint .",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
+    "test": "clear && yarn lint-test && NODE_ENV=test jest",
     "build": "yarn build:types && yarn build:js && rm -R lib/__tests__",
     "build:types": "tsc --emitDeclarationOnly && mv lib/src/* lib && rmdir lib/src",
     "build:js": "babel src --out-dir lib --extensions \".js,.ts\" --source-maps inline"
@@ -38,6 +39,9 @@
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-typescript": "^7.8.3",
     "@types/jest": "^27.0.3",
+    "@typescript-eslint/eslint-plugin": "5.8.0",
+    "@typescript-eslint/parser": "5.8.0",
+    "eslint": "8.5.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",

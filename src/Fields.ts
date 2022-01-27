@@ -1,9 +1,9 @@
-import { Filter, Schema } from "./Interfaces";
+import { Filter, Schema } from './Interfaces';
 
 interface InvalidField {
     field: string;
     message: string;
-};
+}
 
 export interface RunFieldsReturn<D> {
     valid: boolean;
@@ -26,7 +26,7 @@ class Fields<D> implements IFields<D> {
     constructor(
         readonly schema: Schema,
         readonly data: D,
-    ) { };
+    ) { }
 
     /* 
         "data" is the data to be filtered
@@ -42,12 +42,12 @@ class Fields<D> implements IFields<D> {
                 schema[schemaKey] = {
                     filters: [],
                     required: true,
-                }
+                };
             }
         }
 
         let invalidFields: Array<InvalidField> = [];
-        let sanitizedFields: D = <any>{};
+        const sanitizedFields: D = <any>{};
 
         // Loop through all schema keys
         for (const schemaKey in schema) {
@@ -79,17 +79,17 @@ class Fields<D> implements IFields<D> {
 
             // "arr" is the current invalid fields
             const arrayWithInvalidField = (arr: Array<InvalidField>, invalidField: string, failMessage: string) => {
-                let array = [...arr];
+                const array = [...arr];
 
                 const field = `${struct !== undefined ? `${struct}.` : ''}${invalidField}`;
 
                 array.push({
                     field,
                     message: failMessage,
-                })
+                });
 
                 return array;
-            }
+            };
 
             // "dataValue" is the data with the same key as the current schemaKey
             const dataValue = (<any>data)[schemaKey];
@@ -100,22 +100,22 @@ class Fields<D> implements IFields<D> {
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
                     schemaKey,
-                    "This field is required and it must not be null or undefined"
+                    'This field is required and it must not be null or undefined',
                 );
                 continue;
             } else if (schemaValue && schemaValue.maxLength && Number.isInteger(schemaValue.maxLength) && dataValue && dataValue.length > schemaValue.maxLength) {
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
                     schemaKey,
-                    `The max length for this field is ${schemaValue.maxLength} characters!`
+                    `The max length for this field is ${schemaValue.maxLength} characters!`,
                 );
                 continue;
             }
 
             if ((!dataValue && dataValue !== false) && schemaValue.required === false) continue;
 
-            const validateFilters = schemaValue.filters.filter(filter => filter.type === "validate") || [];
-            const sanitizeFilters = schemaValue.filters.filter(filter => filter.type === "sanitize") || [];
+            const validateFilters = schemaValue.filters.filter(filter => filter.type === 'validate') || [];
+            const sanitizeFilters = schemaValue.filters.filter(filter => filter.type === 'sanitize') || [];
 
             let validatedByFilters = true;
 
@@ -125,7 +125,7 @@ class Fields<D> implements IFields<D> {
                     invalidFields = arrayWithInvalidField(
                         invalidFields,
                         schemaKey,
-                        validateFilter.failMessage || "",
+                        validateFilter.failMessage || '',
                     );
                     validatedByFilters = false;
                     break;

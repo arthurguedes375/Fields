@@ -1,5 +1,5 @@
-import { Schema } from "./Interfaces";
-import Fields from "./Fields";
+import { Schema } from './Interfaces';
+import Fields from './Fields';
 
 interface IFactory<D> {
     readonly schema: Schema;

@@ -1,16 +1,16 @@
-import { Schema } from "@src/Interfaces";
+import { Schema } from '@src/Interfaces';
 
 export const ValidateTestSchema: Schema = {
     notRequiredWithFilters: {
         filters: [
             {
-                type: "validate",
+                type: 'validate',
                 filter: (data: string) => {
-                    if (data == "abcde") return true;
+                    if (data == 'abcde') return true;
                     return false;
                 },
-                failMessage: "Content is not equal to \"abcde\""
-            }
+                failMessage: 'Content is not equal to "abcde"',
+            },
         ],
         required: false,
     },
@@ -21,13 +21,13 @@ export const ValidateTestSchema: Schema = {
     notRequiredWithMaxLengthAndFilters: {
         filters: [
             {
-                type: "validate",
+                type: 'validate',
                 filter: (data: string) => {
-                    if (data == "a") return true;
+                    if (data == 'a') return true;
                     return false;
                 },
-                failMessage: "Content is not equal to \"a\""
-            }
+                failMessage: 'Content is not equal to "a"',
+            },
         ],
         maxLength: 2,
         required: false,
@@ -36,9 +36,9 @@ export const ValidateTestSchema: Schema = {
         filters: [
             {
                 type: 'validate',
-                filter: (data: any) => data === "abc",
+                filter: (data: any) => data === 'abc',
                 failMessage: 'Content is not equal to "abc"',
-            }
+            },
         ],
         required: true,
         validationOnly: true,
@@ -47,13 +47,13 @@ export const ValidateTestSchema: Schema = {
     requiredWithFilters: {
         filters: [
             {
-                type: "validate",
+                type: 'validate',
                 filter: (data: string) => {
-                    if (data == "abcde") return true;
+                    if (data == 'abcde') return true;
                     return false;
                 },
-                failMessage: "Content is not equal to \"abcde\""
-            }
+                failMessage: 'Content is not equal to "abcde"',
+            },
         ],
         required: true,
     },
@@ -64,13 +64,13 @@ export const ValidateTestSchema: Schema = {
     requiredWithMaxLengthAndFilters: {
         filters: [
             {
-                type: "validate",
+                type: 'validate',
                 filter: (data: string) => {
-                    if (data == "a") return true;
+                    if (data == 'a') return true;
                     return false;
                 },
-                failMessage: "Content is not equal to \"a\""
-            }
+                failMessage: 'Content is not equal to "a"',
+            },
         ],
         maxLength: 2,
         required: true,
@@ -81,25 +81,25 @@ export const SanitizeTestSchema: Schema = {
     removingSpaces: {
         filters: [
             {
-                type: "validate",
+                type: 'validate',
                 filter: (data: any) => {
-                    return data.includes(" ");
+                    return data.includes(' ');
                 },
-                failMessage: "There is no space",
+                failMessage: 'There is no space',
             },
             {
-                type: "sanitize",
+                type: 'sanitize',
                 filter: (data: any) => {
                     return data.replace(/\s/g, '');
-                }
+                },
             },
             {
-                type: "sanitize",
+                type: 'sanitize',
                 filter: (data: any) => {
                     return `.   .${data}.   .`;
-                }
-            }
+                },
+            },
         ],
         required: true,
-    }
+    },
 };

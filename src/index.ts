@@ -6,6 +6,6 @@ export {
     Factory,
     FactoryClass,
     Schema,
-    Fields
+    Fields,
 };
 export default Factory;
