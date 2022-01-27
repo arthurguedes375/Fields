@@ -1,23 +1,36 @@
-export interface Filter {
+export interface ValidateFilter<D = any> {
     /**
      * Defines the type of the filter.
      */
-    type: 'validate' | 'sanitize';
+    type: 'validate';
 
     /**
      * Filter function,
-     * If the type of the filter was set to "validate" then this function must return a boolean that indicates whether the data is valid or not
-     * If the type of the filter was set to "sanitize" then this function must return the sanitized data.
+     * This function must return a boolean that indicates whether the data is valid or not
      */
-    filter: (data: any) => Promise<any> | any;
+    filter: (data: D) => Promise<boolean> | boolean;
 
     /**
-     * You only need to set this if the type of the filter was set to "validate",
      * If the filter function returns false then this message should contain the reason for the data to be considered invalid
      * the failMessage will be returned inside the invalidFields
      */
-    failMessage?: string;
+    failMessage: string;
 }
+
+export interface SanitizeFilter<D = any, R = D> {
+    /**
+     * Defines the type of the filter.
+     */
+    type: 'sanitize';
+
+    /**
+     * Filter function.
+     * This function must return the sanitized data.
+     */
+    filter: (data: D) => Promise<R> | R;
+}
+
+export type Filter<D = any, R = D> = ValidateFilter<D> | SanitizeFilter<D, R>;
 
 export interface Schema {
     /**
@@ -43,6 +56,9 @@ export interface Schema {
      * The field is going to be validated but it is not going to be in the output.
      */
     validationOnly?: boolean;
+
+    arrayValidation?: boolean;
+    arrayValidationSchema?: Schema;
 
     [key: string]: Schema | Array<Filter> | number | boolean | undefined | null;
 }

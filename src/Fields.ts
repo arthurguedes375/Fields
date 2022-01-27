@@ -28,15 +28,49 @@ class Fields<D> implements IFields<D> {
         readonly data: D,
     ) { }
 
-    /* 
-        "data" is the data to be filtered
-        "schema" is the Filters and the information required to validate the data
-        "struct" is the Structure of the current loop, so if some data is not allowed its gonna print out like: contact.address.street
-    */
+    /**
+     * 
+     * @param schema The value or schema to be checked
+     * @returns True if the value is a schema or false if the value is not a schema.
+     */
+    isSchema(schema: Schema) {
+        return (
+            schema !== null && schema !== undefined &&
+            (schema.required !== true && schema.required !== false)
+            && (schema.validationOnly !== true && schema.validationOnly !== false)
+            && !schema.filters
+            && !schema.maxLength
+        );
+    }
+
+    isRequired(schema: Schema) {
+        return (schema.required === true || schema.required === undefined); 
+    }
+
+    hasMaxLength(schema: Schema) {
+        return (
+            schema &&
+            schema.maxLength &&
+            Number.isInteger(schema.maxLength)
+        );
+    }
+
+    addLevelToStruct(fieldName: string, struct?: string) {
+        return `${struct !== undefined ? `${struct}.` : ''}${fieldName}`;
+    }
+
+
+    /**
+     *
+     * @param data Data to be validated
+     * @param schema The schema to validate the data
+     * @param struct The depth of the current loop, it's used as prefix to reefer to the field.
+     */
     async runFields<D2 = D>(data?: D2 | D, schema?: Schema, struct?: string): Promise<RunFieldsReturn<D>> {
         schema = schema || this.schema;
         data = data || this.data;
 
+        // Sets default values if the schemaValue is null
         for (const schemaKey in schema) {
             if (schema[schemaKey] === null) {
                 schema[schemaKey] = {
@@ -46,7 +80,14 @@ class Fields<D> implements IFields<D> {
             }
         }
 
+        /**
+         * Array that contains the invalid fields along with their fail messages
+         */
         let invalidFields: Array<InvalidField> = [];
+
+        /**
+         * Object that contains the sanitized and validated data
+         */
         const sanitizedFields: D = <any>{};
 
         // Loop through all schema keys
@@ -54,14 +95,19 @@ class Fields<D> implements IFields<D> {
             const schemaValue = <Schema>schema[schemaKey];
 
             // If the schemaKey is another schema then it is going to validate the data using the schema inside that schemaKey
-            if (schemaValue !== null && schemaValue !== undefined &&
-                (schemaValue.required !== true && schemaValue.required !== false)
-                && (schemaValue.validationOnly !== true && schemaValue.validationOnly !== false)
-                && !schemaValue.filters
-                && !schemaValue.maxLength
-            ) {
-                const { valid, invalidFields: invalidFieldsReturned, sanitizedFields: sanitizedFieldsReturned } = await this.runFields((<any>data)[schemaKey], schemaValue, `${struct !== undefined ? `${struct}.` : ''}${schemaKey}`);
+            if (this.isSchema(schemaValue)) {
+                const {
+                    valid,
+                    invalidFields: invalidFieldsReturned,
+                    sanitizedFields: sanitizedFieldsReturned,
+                } = await this.runFields(
+                    (<any>data)[schemaKey],
+                    schemaValue,
+                    this.addLevelToStruct(schemaKey, struct),
+                );
+
                 (<any>sanitizedFields)[schemaKey] = sanitizedFieldsReturned;
+
                 // If there was any error validating the data its going to add it to invalidFields
                 if (valid === false) {
                     invalidFields = [
@@ -77,33 +123,51 @@ class Fields<D> implements IFields<D> {
                 ...this.defaultFilters,
             ];
 
-            // "arr" is the current invalid fields
+            /**
+             * 
+             * @param arr Current invalid fields
+             * @param invalidField Name of the field that is invalid
+             * @param failMessage Fail message
+             * @returns Array with the invalid field
+             */
             const arrayWithInvalidField = (arr: Array<InvalidField>, invalidField: string, failMessage: string) => {
-                const array = [...arr];
+                const field = this.addLevelToStruct(invalidField, struct);
 
-                const field = `${struct !== undefined ? `${struct}.` : ''}${invalidField}`;
-
-                array.push({
+                arr.push({
                     field,
                     message: failMessage,
                 });
 
-                return array;
+                return arr;
             };
 
-            // "dataValue" is the data with the same key as the current schemaKey
+            /**
+             * Is the data with the same key as the current schemaKey
+             */
             const dataValue = (<any>data)[schemaKey];
 
-            //The data is invalid(null || undefined) and it is not false  // Making sure that the schemaValue is a field and not another schema                                                      // The required is true
-            if ((!dataValue && dataValue !== false) && ((schemaValue.filters?.length || 0) > 0 || schemaValue.maxLength !== undefined || schemaValue.required !== undefined) && (schemaValue.required === true || schemaValue.required === undefined)) {
-                // It gets here if the data is a nullish value and the field is set to null or if the field.required is set to true 
+            if (
+                //The data is invalid(null || undefined) and it is not false
+                (!dataValue && dataValue !== false) &&
+
+                // Making sure that the schemaValue is a field and not another schema
+                !this.isSchema(schemaValue) &&
+                
+                // The required is true
+                this.isRequired(schemaValue)
+            ) {
+                // It gets here if the data is a nullish value and the field is required
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
                     schemaKey,
                     'This field is required and it must not be null or undefined',
                 );
                 continue;
-            } else if (schemaValue && schemaValue.maxLength && Number.isInteger(schemaValue.maxLength) && dataValue && dataValue.length > schemaValue.maxLength) {
+            } else if (
+                this.hasMaxLength(schemaValue) &&
+                dataValue &&
+                dataValue.length > (<any>schemaValue).maxLength
+            ) {
                 invalidFields = arrayWithInvalidField(
                     invalidFields,
                     schemaKey,
@@ -112,6 +176,7 @@ class Fields<D> implements IFields<D> {
                 continue;
             }
 
+            // If the data is a nullish value and it's not required
             if ((!dataValue && dataValue !== false) && schemaValue.required === false) continue;
 
             const validateFilters = schemaValue.filters.filter(filter => filter.type === 'validate') || [];
@@ -125,7 +190,7 @@ class Fields<D> implements IFields<D> {
                     invalidFields = arrayWithInvalidField(
                         invalidFields,
                         schemaKey,
-                        validateFilter.failMessage || '',
+                        (<any>validateFilter).failMessage || '',
                     );
                     validatedByFilters = false;
                     break;
