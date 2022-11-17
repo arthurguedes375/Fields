@@ -1,4 +1,6 @@
 # @arthurguedes375/fields-validator-repo
+# :warning: Do not use this package.
+# :warning: USE [ZOD](https://www.npmjs.com/package/zod) INSTEAD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ## About
 This library validates data based on a Schema with the Filters and the structure expected from the data
